@@ -1,0 +1,354 @@
+﻿
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>@ViewBag.Title - HUFLIT RESTAURANT</title>
+
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+
+    <link rel="stylesheet" href="~/css/site.css" />
+
+    <script src="~/js/animate-product-cards.js"></script>
+
+    <link rel="icon" type="image/svg+xml"
+          href="@Url.Content("~/Content/images/favicon.svg")?v=1" />
+
+    <link rel="apple-touch-icon"
+          href="@Url.Content("~/Content/images/favicon.svg")?v=1" />
+
+    <meta name="theme-color" content="#E53935" />
+
+    @Styles.Render("~/Content/css")
+    @Scripts.Render("~/bundles/modernizr")
+
+    <style>
+        /* ===== Cấu trúc chung ===== */
+
+        html, body {
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+
+        .site-header {
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            position: relative;
+            z-index: 1000;
+        }
+
+        .header-inner {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+            height: 70px;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .logo {
+            font-weight: bold;
+            font-size: 22px;
+            white-space: nowrap;
+            text-decoration: none;
+        }
+
+        .main-nav {
+            display: flex;
+            align-items: center;
+            gap: 30px;
+            margin: 0 auto;
+        }
+
+            .main-nav a {
+                text-decoration: none;
+                color: #111827;
+                font-weight: 500;
+                font-size: 15px;
+                transition: color 0.2s;
+            }
+
+                .main-nav a:hover {
+                    color: #e74c3c;
+                }
+
+        .header-user {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* ===== Nút menu di động ===== */
+
+        .nav-toggle {
+            display: none;
+            background: #ffffff;
+            border: 1px solid #d1d5db;
+            border-radius: 8px;
+            padding: 6px 12px;
+            font-size: 22px;
+            line-height: 1;
+            cursor: pointer;
+            color: #111827;
+        }
+
+        /* ===== Lớp phủ nền tối ===== */
+
+        .menu-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 900;
+        }
+
+        /* ===== Responsive: điện thoại và máy tính bảng ===== */
+
+        @@media (max-width: 1200px) {
+
+            .header-inner {
+                display: flex !important;
+                flex-wrap: wrap !important;
+                align-items: center !important;
+                justify-content: space-between !important;
+                height: 70px !important;
+                padding-top: 0;
+                padding-bottom: 0;
+                position: relative;
+            }
+                /* Khi menu mở */
+
+                .header-inner.open {
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    max-width: 100%;
+                    height: auto !important;
+                    min-height: 70px;
+                    margin: 0;
+                    padding: 0 20px 15px;
+                    background-color: #ffffff;
+                    box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
+                    z-index: 1001;
+                }
+                    /* Khi mở menu: ẩn logo và nút đóng X */
+                    .header-inner.open .logo,
+                    .header-inner.open .nav-toggle {
+                        display: none !important;
+                    }
+            /* Nút ☰ / ✕ */
+
+            .nav-toggle {
+                display: block !important;
+                position: relative;
+                z-index: 1002;
+                pointer-events: auto;
+            }
+            /* Ẩn menu trước khi mở */
+
+            .main-nav,
+            .header-user {
+                display: none !important;
+                width: 100%;
+                flex-direction: column !important;
+                align-items: stretch !important;
+                gap: 8px;
+                margin: 0 !important;
+            }
+            /* Hiện menu khi có class open */
+
+            .header-inner.open .main-nav,
+            .header-inner.open .header-user {
+                display: flex !important;
+            }
+            /* Menu điều hướng */
+
+            .main-nav {
+                margin-top: 10px !important;
+            }
+
+                .main-nav a {
+                    display: block;
+                    width: 100%;
+                    box-sizing: border-box;
+                    padding: 12px 4px;
+                    margin: 0 !important;
+                    border-bottom: 1px solid #e5e7eb;
+                }
+            /* Tài khoản */
+
+            .header-user {
+                padding-top: 8px;
+                padding-bottom: 6px;
+            }
+
+                .header-user a {
+                    display: block;
+                    width: 100%;
+                    box-sizing: border-box;
+                    text-align: center;
+                    padding: 10px 14px;
+                    margin: 0 !important;
+                }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Tiến trình load web -->
+    <div id="page-loader"></div>
+
+    <!-- ===== HEADER ===== -->
+
+    <header class="site-header">
+
+        <div class="container-site header-inner" id="headerInner">
+
+            <!-- Logo -->
+
+            <a class="logo" href="@Url.Action("Index", "Home")">
+                <span class="logo-red">HUFLIT</span> RESTAURANT
+            </a>
+
+
+            <!-- Nút mở / đóng menu -->
+
+            <button type="button"
+                    class="nav-toggle"
+                    id="navToggle"
+                    aria-label="Mở menu"
+                    aria-expanded="false"
+                    aria-controls="mainNav">
+                &#9776;
+            </button>
+
+            <!-- Menu điều hướng -->
+
+            <nav class="main-nav" id="mainNav">
+
+                <a href="@Url.Action("Index", "Home")">
+                    Trang Chủ
+                </a>
+
+                <a href="@Url.Action("Index", "Product")">
+                    Thực Đơn
+                </a>
+
+                <a href="@Url.Action("About", "Home")">
+                    Về Chúng Tôi
+                </a>
+
+                <a href="@Url.Action("Index", "Cart")">
+                    Giỏ hàng
+                    (<span id="cart-count">@(Session["CartCount"] ?? 0)</span>)
+                </a>
+
+            </nav>
+
+            <!-- Khu vực tài khoản -->
+
+            <div class="header-user">
+
+                @if (Session["UserId"] != null)
+                {
+                    <a class="user-name"
+                       href="@Url.Action("Profile", "Account")">
+                        @Session["UserName"]
+                    </a>
+
+                    if (Session["UserRole"] != null &&
+                        Session["UserRole"].ToString() == "Admin")
+                    {
+                        <a class="btn-red"
+                           href="@Url.Action("Orders", "Admin")"
+                           style="background: #374151;">
+                            Quản trị
+                        </a>
+
+                        <a href="@Url.Action("Chat", "Admin")"
+                           class="btn-red"
+                           style="background: #2563EB;">
+                            Chăm sóc KH
+                        </a>
+                    }
+                    else
+                    {
+                        <a href="@Url.Action("CustomerSupport", "Account")"
+                           class="btn-red"
+                           style="background: #2563EB;">
+                            Hỗ trợ
+                        </a>
+                    }
+
+                    <a class="btn-red"
+                       href="@Url.Action("Logout", "Account")">
+                        Đăng xuất
+                    </a>
+                }
+                else
+                {
+                    <a class="btn-outline"
+                       href="@Url.Action("Register", "Account")">
+                        Đăng ký
+                    </a>
+
+                    <a class="btn-red"
+                       href="@Url.Action("Login", "Account")">
+                        Đăng nhập
+                    </a>
+                }
+
+            </div>
+
+        </div>
+
+    </header>
+
+    <!-- Lớp phủ tối nằm ngoài header -->
+
+    <div class="menu-overlay"
+         id="menuOverlay"
+         aria-hidden="true">
+    </div>
+
+    <!-- ===== NỘI DUNG TRANG ===== -->
+
+    <main class="site-main">
+        @RenderBody()
+    </main>
+
+    <!-- ===== FOOTER ===== -->
+
+    <footer class="site-footer">
+        <div class="container-site">
+            Tên nhà hàng: HUFLIT RESTAURANT<br />
+            Địa chỉ: 123 Đường ABC, Quận X, TP.HCM<br />
+            Hotline: 0363420862
+        </div>
+    </footer>
+
+    <!-- ===== JAVASCRIPT ===== -->
+
+
+    @Scripts.Render("~/bundles/jquery")
+    @Scripts.Render("~/bundles/bootstrap")
+
+    <script>
+    window.cartAddToCartUrl = '@Url.Action("AddToCart", "Cart")';
+    </script>
+
+    <script src="@Url.Content("~/Scripts/main-menu.js")"></script><!-- Chức năng đóng Menu -->
+    <script src="@Url.Content("~/Scripts/page-loader.js")"></script><!-- Chức năng loader trang -->
+    <script src="@Url.Content("~/Scripts/add-to-cart.js")"></script> <!-- Chức năng thêm món vào giỏ hàng -->
+    <script src="@Url.Content("~/Scripts/animate-product-cards.js")"></script>
+
+    @RenderSection("scripts", required: false)
+
+</body>
+</html>

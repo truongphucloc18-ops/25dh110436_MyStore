@@ -1,0 +1,285 @@
+﻿
+@model HuflitRestaurant.Models.CartViewModel
+
+@{
+    ViewBag.Title = "Giỏ hàng - HUFLIT RESTAURANT";
+}
+
+<div class="cart-container-custom">
+
+    <h1 class="cart-title-custom">GIỎ HÀNG CỦA BẠN</h1>
+
+    @if (Model != null && Model.Items != null && Model.Items.Any())
+    {
+        <div class="cart-layout-custom">
+
+            <!-- Cột trái: Bảng món ăn -->
+            <div class="cart-table-wrapper">
+
+                <table class="cart-table-custom">
+                    <thead>
+                        <tr>
+                            <th>Món ăn</th>
+                            <th>Đơn giá</th>
+                            <th>Số lượng</th>
+                            <th>Thành tiền</th>
+                            <th>Thao tác</th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @foreach (var item in Model.Items)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="cart-item-info">
+                                        <img src="@Url.Content(item.HinhAnh)"
+                                             alt="@item.Ten"
+                                             class="cart-item-img"
+                                             onerror="this.onerror=null; this.src='https://via.placeholder.com/70';" />
+
+                                        <span class="cart-item-name">
+                                            @item.Ten
+                                        </span>
+                                    </div>
+                                </td>
+
+                                <!-- Đơn giá -->
+                                <td>
+                                    @item.Gia.ToString(
+                                        "#,##0",
+                                        new System.Globalization.CultureInfo("vi-VN")
+                                    ) ₫
+                                </td>
+
+                                <!-- Số lượng -->
+                                <td>
+                                    <input type="number"
+                                           value="@item.SoLuong"
+                                           min="1"
+                                           step="1"
+                                           class="qty-input"
+                                           data-price="@item.Gia"
+                                           aria-label="Số lượng @item.Ten" />
+                                </td>
+
+                                <!-- Thành tiền từng món -->
+                                <td>
+                                    <strong class="cart-item-total">
+                                        @((item.Gia * item.SoLuong).ToString(
+                                            "#,##0",
+                                            new System.Globalization.CultureInfo("vi-VN")
+                                        )) ₫
+                                    </strong>
+                                </td>
+
+                                <!-- Nút mở modal xác nhận xóa -->
+                                <td>
+                                    <button type="button"
+                                            class="btn-delete-item"
+                                            data-delete-url="@Url.Action("RemoveFromCart", "Cart", new { id = item.ProductId })"
+                                            data-product-name="@item.Ten"
+                                            aria-label="Xóa @item.Ten khỏi giỏ hàng">
+
+                                        <svg xmlns="http://www.w3.org/2000/svg"
+                                             width="16"
+                                             height="16"
+                                             viewBox="0 0 24 24"
+                                             fill="none"
+                                             stroke="currentColor"
+                                             stroke-width="2"
+                                             stroke-linecap="round"
+                                             stroke-linejoin="round"
+                                             aria-hidden="true">
+                                            <path d="M3 6h18" />
+                                            <path d="M8 6V4h8v2" />
+                                            <path d="M19 6l-1 14H6L5 6" />
+                                            <path d="M10 11v5" />
+                                            <path d="M14 11v5" />
+                                        </svg>
+
+                                        <span>Xóa</span>
+                                    </button>
+                                </td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+
+            </div>
+
+            <!-- Cột phải: Tóm tắt đơn hàng -->
+            <div class="cart-summary-box">
+
+                <h3 class="summary-title">TÓM TẮT ĐƠN HÀNG</h3>
+
+                <!-- Tạm tính: JavaScript cập nhật vị trí này -->
+                <div class="summary-row">
+                    <span>Tạm tính:</span>
+
+                    <span class="cart-subtotal">
+                        @Model.Items.Sum(x => x.Gia * x.SoLuong).ToString(
+                            "#,##0",
+                            new System.Globalization.CultureInfo("vi-VN")
+                        ) ₫
+                    </span>
+                </div>
+
+                <div class="summary-row">
+                    <span>Phí vận chuyển:</span>
+                    <span>Miễn phí</span>
+                </div>
+
+                <!-- Tổng cộng: JavaScript cập nhật vị trí này -->
+                <div class="summary-row summary-row-total">
+                    <span>Tổng cộng:</span>
+
+                    <span class="summary-total-price cart-total">
+                        @Model.Items.Sum(x => x.Gia * x.SoLuong).ToString(
+                            "#,##0",
+                            new System.Globalization.CultureInfo("vi-VN")
+                        ) ₫
+                    </span>
+                </div>
+
+                <a href="@Url.Action("Checkout", "Cart")"
+                   class="btn-checkout-custom">
+                    TIẾN HÀNH ĐẶT HÀNG
+                </a>
+
+            </div>
+
+        </div>
+    }
+    else
+    {
+        <!-- Giao diện khi giỏ hàng trống -->
+        <div class="cart-empty-state">
+
+            <div class="cart-empty-icon">
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     width="56"
+                     height="56"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="1.5"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     aria-hidden="true">
+                    <circle cx="9" cy="21" r="1" />
+                    <circle cx="20" cy="21" r="1" />
+                    <path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6" />
+                </svg>
+            </div>
+
+            <h2>Giỏ hàng đang trống</h2>
+
+            <p>
+                Bạn chưa chọn món ăn nào.
+                Hãy khám phá thực đơn và chọn món yêu thích nhé!
+            </p>
+
+            <a href="@Url.Action("Index", "Product")"
+               class="btn-checkout-custom cart-empty-button">
+                KHÁM PHÁ THỰC ĐƠN
+            </a>
+
+        </div>
+    }
+
+</div>
+
+
+<!-- =========================================
+     MODAL XÁC NHẬN XÓA MÓN ĂN
+     ========================================= -->
+<div id="deleteCartModal"
+     class="delete-cart-modal"
+     aria-hidden="true"
+     role="dialog"
+     aria-modal="true"
+     aria-labelledby="deleteCartTitle"
+     aria-describedby="deleteCartDescription">
+
+    <div class="delete-cart-backdrop" data-close-modal></div>
+
+    <div class="delete-cart-dialog">
+
+        <button type="button"
+                class="delete-cart-close"
+                data-close-modal
+                aria-label="Đóng hộp thoại">
+            &times;
+        </button>
+
+        <div class="delete-cart-icon">
+            <svg xmlns="http://www.w3.org/2000/svg"
+                 width="30"
+                 height="30"
+                 viewBox="0 0 24 24"
+                 fill="none"
+                 stroke="currentColor"
+                 stroke-width="1.8"
+                 stroke-linecap="round"
+                 stroke-linejoin="round"
+                 aria-hidden="true">
+                <path d="M3 6h18" />
+                <path d="M8 6V4h8v2" />
+                <path d="M19 6l-1 14H6L5 6" />
+                <path d="M10 11v5" />
+                <path d="M14 11v5" />
+            </svg>
+        </div>
+
+        <h2 id="deleteCartTitle">Xóa món ăn?</h2>
+
+        <p id="deleteCartDescription">
+            Bạn có chắc chắn muốn xóa món
+            <strong id="deleteProductName"></strong>
+            khỏi giỏ hàng không?
+        </p>
+
+        <div class="delete-cart-actions">
+
+            <button type="button"
+                    class="btn-cancel-delete"
+                    data-close-modal>
+                Giữ lại
+            </button>
+
+            <button type="button"
+                    id="confirmDeleteCart"
+                    class="btn-confirm-delete">
+
+                <svg xmlns="http://www.w3.org/2000/svg"
+                     width="16"
+                     height="16"
+                     viewBox="0 0 24 24"
+                     fill="none"
+                     stroke="currentColor"
+                     stroke-width="2"
+                     stroke-linecap="round"
+                     stroke-linejoin="round"
+                     aria-hidden="true">
+                    <path d="M3 6h18" />
+                    <path d="M8 6V4h8v2" />
+                    <path d="M19 6l-1 14H6L5 6" />
+                </svg>
+
+                <span>Xóa món</span>
+            </button>
+
+        </div>
+
+    </div>
+</div>
+
+
+<!-- =========================================
+     JAVASCRIPT
+     ========================================= -->
+
+<script src="@Url.Content("~/Scripts/cart-delete-modal.js")"></script><!-- Chức năng xóa sản phẩm -->
+
+<script src="@Url.Content("~/Scripts/cart-quantity.js")"></script><!-- Chức năng tính lại tiền khi thay đổi số lượng -->
