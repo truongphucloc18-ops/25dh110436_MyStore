@@ -78,6 +78,7 @@ namespace HuflitRestaurant.Controllers
         {
             var cart = GetCart();
             var item = cart.FirstOrDefault(i => i.ProductId == id);
+
             if (item != null)
             {
                 if (quantity > 0)
@@ -88,9 +89,11 @@ namespace HuflitRestaurant.Controllers
                 {
                     cart.Remove(item);
                 }
+
                 UpdateCartCount();
             }
-            return RedirectToAction("Index");
+
+            return Json(new { success = true });
         }
 
         public ActionResult RemoveFromCart(int id)

@@ -57,9 +57,10 @@
                                     <input type="number"
                                            value="@item.SoLuong"
                                            min="1"
+                                           max="10"
                                            step="1"
                                            class="qty-input"
-                                           data-price="@item.Gia"
+                                           data-product-id="@item.ProductId"                                           data-price="@item.Gia.ToString(System.Globalization.CultureInfo.InvariantCulture)"
                                            aria-label="Số lượng @item.Ten" />
                                 </td>
 
@@ -281,5 +282,9 @@
      ========================================= -->
 
 <script src="@Url.Content("~/Scripts/cart-delete-modal.js")"></script><!-- Chức năng xóa sản phẩm -->
+
+<script>
+    window.cartUpdateQuantityUrl = '@Url.Action("UpdateQuantity", "Cart")';
+</script>
 
 <script src="@Url.Content("~/Scripts/cart-quantity.js")"></script><!-- Chức năng tính lại tiền khi thay đổi số lượng -->
